@@ -64,9 +64,11 @@ def peak_candidates(snapshot, positions, angles, relative_power=0.99):
         or not 0 < relative_power <= 1
     ):
         raise ValueError("Invalid snapshot or relative power threshold")
-    scale = np.max(np.abs(x))
+    # Complex magnitudes can overflow despite both components being finite.
+    scale = max(np.max(np.abs(x.real)), np.max(np.abs(x.imag)))
     if scale == 0:
         return np.array([], dtype=float)
-    p = np.abs(d.conj().T @ (x / scale)) ** 2
+    scaled = x.real / scale + 1j * (x.imag / scale)
+    p = np.abs(d.conj().T @ scaled) ** 2
     local = (p >= np.r_[-np.inf, p[:-1]]) & (p >= np.r_[p[1:], -np.inf])
     return np.asarray(angles)[local & (p >= relative_power * p.max())]
