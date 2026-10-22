@@ -55,6 +55,15 @@ class GateCounter:
             if time - value.last <= self.gap
         }
         events = []
+        # An explicit frame without this identity is not evidence of a
+        # continuous dwell. Keep the last stable side until expiry, but require
+        # fresh uninterrupted confirmation/rearming when the track reappears.
+        for key, track in self.tracks.items():
+            if key not in distances:
+                track.pending = None
+                track.since = None
+                if not track.armed:
+                    track.confirmed_at = None
         for key, distance in distances.items():
             track = self.tracks.setdefault(key, Track(last=time))
             track.last = time
