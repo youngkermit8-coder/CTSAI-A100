@@ -24,7 +24,7 @@ class BackgroundMap:
             or int(min_frames) != min_frames
         ):
             raise ValueError("Invalid grid/probability/training length")
-        self.config = {
+        self._config = {
             "range_step": range_step,
             "angle_step": angle_step,
             "max_range": max_range,
@@ -37,6 +37,11 @@ class BackgroundMap:
         )
         self.hits = np.zeros(self.shape, dtype=np.int64)
         self.frames = 0
+
+    @property
+    def config(self):
+        """A detached snapshot; changing it cannot reinterpret fitted cells."""
+        return self._config.copy()
 
     def cells(self, points):
         p = np.asarray(points, dtype=float)
