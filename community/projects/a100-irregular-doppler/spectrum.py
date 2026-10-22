@@ -22,14 +22,23 @@ def spectrum(samples, times, frequencies, weights=None, block=128):
     if not isinstance(block, int) or block < 1:
         raise ValueError("Positive integer block required")
     w = np.ones(len(x)) if weights is None else np.asarray(weights, dtype=float)
-    if w.shape != x.shape or not np.isfinite(w).all() or np.any(w < 0) or w.sum() <= 0:
+    if (
+        w.shape != x.shape
+        or not np.isfinite(w).all()
+        or np.any(w < 0)
+        or not np.any(w > 0)
+    ):
         raise ValueError("Finite nonnegative weights with positive sum required")
+    # Normalize before multiplying samples: an arbitrary weight scale must not
+    # overflow either the denominator or the weighted sample vector.
+    w = w / w.max()
+    w = w / w.sum()
     t = t - t[0]
     result = np.empty(len(f), dtype=complex)
     for start in range(0, len(f), block):
         grid = f[start : start + block]
-        result[start : start + block] = (
-            np.exp(-2j * np.pi * grid[:, None] * t) @ (w * x) / w.sum()
+        result[start : start + block] = np.exp(-2j * np.pi * grid[:, None] * t) @ (
+            w * x
         )
     return result
 

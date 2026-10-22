@@ -29,7 +29,7 @@
       },
       "range_bin": 5,
       "kept_chirps": 192,
-      "zero_fill_oracle_relative_error": 1.3458161887541554e-14,
+      "zero_fill_oracle_relative_error": 1.3441420622661486e-14,
       "full_peak_cycles_per_period": -0.25,
       "missing_peak_cycles_per_period": -0.25
     },
@@ -43,7 +43,7 @@
       },
       "range_bin": 5,
       "kept_chirps": 192,
-      "zero_fill_oracle_relative_error": 1.1946293770862773e-14,
+      "zero_fill_oracle_relative_error": 1.1867261740766964e-14,
       "full_peak_cycles_per_period": -0.25,
       "missing_peak_cycles_per_period": -0.25
     },
@@ -57,7 +57,7 @@
       },
       "range_bin": 5,
       "kept_chirps": 192,
-      "zero_fill_oracle_relative_error": 1.4517058087189764e-14,
+      "zero_fill_oracle_relative_error": 1.450091031929599e-14,
       "full_peak_cycles_per_period": -0.25,
       "missing_peak_cycles_per_period": -0.25
     },
@@ -71,7 +71,7 @@
       },
       "range_bin": 5,
       "kept_chirps": 192,
-      "zero_fill_oracle_relative_error": 1.0409607977403346e-14,
+      "zero_fill_oracle_relative_error": 1.0453711642801996e-14,
       "full_peak_cycles_per_period": -0.25,
       "missing_peak_cycles_per_period": -0.25
     },
@@ -113,7 +113,7 @@
       },
       "range_bin": 5,
       "kept_chirps": 192,
-      "zero_fill_oracle_relative_error": 1.0717990941488113e-14,
+      "zero_fill_oracle_relative_error": 1.0715760200301623e-14,
       "full_peak_cycles_per_period": 0.125,
       "missing_peak_cycles_per_period": 0.125
     },
@@ -127,7 +127,7 @@
       },
       "range_bin": 5,
       "kept_chirps": 192,
-      "zero_fill_oracle_relative_error": 1.0724403342281173e-14,
+      "zero_fill_oracle_relative_error": 1.0714017494690236e-14,
       "full_peak_cycles_per_period": -0.25,
       "missing_peak_cycles_per_period": -0.25
     },
@@ -141,7 +141,7 @@
       },
       "range_bin": 6,
       "kept_chirps": 192,
-      "zero_fill_oracle_relative_error": 1.0999974075780925e-14,
+      "zero_fill_oracle_relative_error": 1.0944851460850516e-14,
       "full_peak_cycles_per_period": -0.25,
       "missing_peak_cycles_per_period": -0.25
     },
@@ -155,7 +155,7 @@
       },
       "range_bin": 5,
       "kept_chirps": 192,
-      "zero_fill_oracle_relative_error": 1.5353751061989822e-14,
+      "zero_fill_oracle_relative_error": 1.5312350740187417e-14,
       "full_peak_cycles_per_period": -0.5,
       "missing_peak_cycles_per_period": -0.5
     }
