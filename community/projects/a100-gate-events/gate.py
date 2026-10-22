@@ -28,9 +28,12 @@ class GateCounter:
             rearm_seconds,
             max_gap,
         )
+        self.epoch = -1
         self.reset()
 
     def reset(self):
+        """Start a distinct aggregation epoch, including explicit source resets."""
+        self.epoch += 1
         self.tracks = {}
         self.last_time = None
 
@@ -97,6 +100,7 @@ class GateCounter:
                     events.append(
                         {
                             "track_id": key,
+                            "epoch": self.epoch,
                             "time_s": time,
                             "direction": "positive" if side > 0 else "negative",
                             "confirmation_started_s": track.since,

@@ -14,12 +14,14 @@
       "confirmed_events": [
         {
           "track_id": "a",
+          "epoch": 0,
           "time_s": 2.3000000000000003,
           "direction": "negative",
           "confirmation_started_s": 2.0
         },
         {
           "track_id": "a",
+          "epoch": 0,
           "time_s": 4.3,
           "direction": "positive",
           "confirmation_started_s": 4.0
@@ -37,12 +39,14 @@
       "confirmed_events": [
         {
           "track_id": "a",
+          "epoch": 0,
           "time_s": 2.3000000000000003,
           "direction": "negative",
           "confirmation_started_s": 2.0
         },
         {
           "track_id": "a",
+          "epoch": 0,
           "time_s": 4.3,
           "direction": "positive",
           "confirmation_started_s": 4.0
@@ -54,6 +58,28 @@
       ]
     }
   ],
+  "clock_reset_aggregation": {
+    "expected_passes": 2,
+    "events": [
+      {
+        "track_id": "a",
+        "epoch": 0,
+        "time_s": 0.7,
+        "direction": "negative",
+        "confirmation_started_s": 0.4
+      },
+      {
+        "track_id": "a",
+        "epoch": 1,
+        "time_s": 0.7,
+        "direction": "negative",
+        "confirmation_started_s": 0.4
+      }
+    ],
+    "deduplicated_without_epoch": 1,
+    "deduplicated_with_epoch": 2,
+    "limits": "Synthetic reset scenario; epoch is local to this counter instance. Persistent sinks must additionally supply a unique run/source identifier."
+  },
   "published_envelope": [
     {
       "scene": "approaching_box",
@@ -63,6 +89,7 @@
       "confirmed_events": [
         {
           "track_id": "envelope",
+          "epoch": 0,
           "time_s": 38.08,
           "direction": "negative",
           "confirmation_started_s": 37.75
@@ -78,6 +105,7 @@
       "confirmed_events": [
         {
           "track_id": "envelope",
+          "epoch": 0,
           "time_s": 19.659,
           "direction": "positive",
           "confirmation_started_s": 19.319

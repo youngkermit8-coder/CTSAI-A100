@@ -20,6 +20,30 @@ def run(series, **kwargs):
     return events
 
 
+def epoch_case():
+    # Two distinct injected passes repeat the same ID and local clock after a
+    # restart. Truth is two passes; an aggregation key must keep that boundary.
+    cycle = [(0.0, 1), (0.3, 1), (0.4, -1), (0.7, -1)]
+    counter = GateCounter()
+    events = []
+    for _ in range(2):
+        for time, distance in cycle:
+            events.extend(counter.update(time, {"a": distance}))
+    legacy_keys = {(e["track_id"], e["time_s"], e["direction"]) for e in events}
+    epoch_keys = {
+        (e["epoch"], e["track_id"], e["time_s"], e["direction"]) for e in events
+    }
+    if len(events) != 2 or len(epoch_keys) != 2:
+        raise RuntimeError("Repeated-time passes lost across epochs")
+    return {
+        "expected_passes": 2,
+        "events": events,
+        "deduplicated_without_epoch": len(legacy_keys),
+        "deduplicated_with_epoch": len(epoch_keys),
+        "limits": "Synthetic reset scenario; epoch is local to this counter instance. Persistent sinks must additionally supply a unique run/source identifier.",
+    }
+
+
 def main():
     times = np.arange(0, 6, 0.1)
     # Independently specified event truth: one pass at 2s, return at 4s.
@@ -88,6 +112,7 @@ def main():
             "real_replay_max_gap_s": 2.0,
         },
         "synthetic": synthetic,
+        "clock_reset_aggregation": epoch_case(),
         "published_envelope": measured,
         "source": source.relative_to(ROOT.parent).as_posix(),
         "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
