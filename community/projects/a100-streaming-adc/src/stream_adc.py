@@ -67,6 +67,10 @@ def range_profile(path, block_chirps=8):
     try:
         channel, samples, chirps = header(iterator)
         window = np.hanning(samples)
+        if not np.any(window):
+            raise ValueError(
+                "At least four samples required for a nonzero symmetric Hann window"
+            )
         total = np.zeros(samples // 2 + 1)
         for start in range(0, chirps, block_chirps):
             count = min(block_chirps, chirps - start)
