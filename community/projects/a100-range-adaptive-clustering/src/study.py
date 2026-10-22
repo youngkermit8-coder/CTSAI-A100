@@ -1,6 +1,7 @@
 """Density clustering under fixed and polar-noise-scaled neighbourhoods."""
 
 import numpy as np
+
 from logio import xy
 
 
@@ -69,8 +70,19 @@ def density_labels(adj, min_samples=4):
 
 
 def pair_scores(labels, truth):
+    labels, truth = np.asarray(labels), np.asarray(truth)
+    if (
+        labels.ndim != 1
+        or truth.shape != labels.shape
+        or not len(labels)
+        or not np.issubdtype(labels.dtype, np.integer)
+        or not np.issubdtype(truth.dtype, np.integer)
+        or np.any(labels < -1)
+        or np.any(truth < -1)
+    ):
+        raise ValueError("Equal nonempty integer labels required; -1 denotes noise")
     upper = np.triu(np.ones((len(labels), len(labels)), dtype=bool), 1)
-    actual = (truth[:, None] == truth[None, :]) & upper
+    actual = (truth[:, None] == truth[None, :]) & (truth[:, None] >= 0) & upper
     predicted = (labels[:, None] == labels[None, :]) & (labels[:, None] >= 0) & upper
     tp = int((actual & predicted).sum())
     return {
