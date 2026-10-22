@@ -1,5 +1,7 @@
 # A100 ROI 占用状态的时间防抖与失联处理
 
+[采集时间新鲜度深化](docs/capture-freshness.md)：可选外部时钟映射与误差界，解决递增旧缓存绕过顺序检查的问题。六组传输实验同时报告过期包、unknown 代价、轮询延迟和错误映射的失败案例；当前共 33 项测试通过。
+
 新增[八场景应用回放](docs/application-cases.md)：复用五组公开实测会话，并明确注入断流、迟到/重复包、设备重启三种故障。应用层区分本地接收时钟和设备时钟，拒绝旧包续期，记录 occupied/clear/unknown 状态事件。五组实测共 2,902 帧；这是一个集中完善的应用案例，不是八个独立算法。推车场景的窄 ROI 迁移失败也保留在结果中。
 
 作者：Keming Yang（GitHub: [youngkermit8-coder](https://github.com/youngkermit8-coder)）。本项目为独立Community Project，仅新增本目录，遵循仓库Apache-2.0许可证。
@@ -26,6 +28,7 @@ python -m unittest discover -s community/projects/a100-occupancy-hysteresis/test
 python community/projects/a100-occupancy-hysteresis/src/study.py
 python community/projects/a100-occupancy-hysteresis/src/validate_presence.py
 python community/projects/a100-occupancy-hysteresis/src/application_cases.py
+python community/projects/a100-occupancy-hysteresis/src/freshness_cases.py
 ```
 
 入口支持`--input`和`--output`。默认输入相对脚本定位，与工作目录无关。固定实验种子为20261022；默认输出为本项目results目录，会覆盖同名实验产物。算法参数暴露在src/study.py函数接口中；CLI仅选择数据与输出目录，实验默认参数在结果JSON中列出。
