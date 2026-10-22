@@ -25,6 +25,8 @@ def read_frames(path):
             if not row:
                 continue
             if row[0] == "ObjId":
+                if len(set(row)) != len(row):
+                    raise ValueError("Duplicate target column names")
                 columns = {name: i for i, name in enumerate(row)}
                 if not {"ObjId", "range", "angle", "speed"} <= columns.keys():
                     raise ValueError("Missing target columns")
@@ -48,11 +50,13 @@ def read_frames(path):
                 current["stamp"] = datetime.strptime(
                     row[0].replace("---->", "").strip(), "%Y/%m/%d %H:%M:%S:%f"
                 )
-            elif current is not None and columns is not None:
+            elif current is not None:
                 try:
                     float(row[0])
                 except ValueError:
                     continue  # diagnostic/status rows
+                if columns is None:
+                    raise ValueError("Numeric target before column header")
                 try:
                     obj, r, angle, speed = [
                         float(row[columns[k]])
