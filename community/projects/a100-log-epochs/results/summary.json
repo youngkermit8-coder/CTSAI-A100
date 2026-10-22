@@ -9,6 +9,9 @@
       "epochs": 1,
       "quarantined_frames": 0,
       "byte_exact_roundtrip": true,
+      "streaming_file_roundtrip": true,
+      "bytes_api_python_peak_bytes": 1468276,
+      "streaming_restore_python_peak_bytes": 229476,
       "monotonic_frames_checked": 207
     },
     {
@@ -20,6 +23,9 @@
       "epochs": 1,
       "quarantined_frames": 0,
       "byte_exact_roundtrip": true,
+      "streaming_file_roundtrip": true,
+      "bytes_api_python_peak_bytes": 1712176,
+      "streaming_restore_python_peak_bytes": 232788,
       "monotonic_frames_checked": 211
     },
     {
@@ -31,6 +37,9 @@
       "epochs": 1,
       "quarantined_frames": 0,
       "byte_exact_roundtrip": true,
+      "streaming_file_roundtrip": true,
+      "bytes_api_python_peak_bytes": 9315983,
+      "streaming_restore_python_peak_bytes": 1256279,
       "monotonic_frames_checked": 1226
     },
     {
@@ -42,6 +51,9 @@
       "epochs": 1,
       "quarantined_frames": 0,
       "byte_exact_roundtrip": true,
+      "streaming_file_roundtrip": true,
+      "bytes_api_python_peak_bytes": 6518881,
+      "streaming_restore_python_peak_bytes": 930898,
       "monotonic_frames_checked": 904
     },
     {
@@ -53,6 +65,9 @@
       "epochs": 1,
       "quarantined_frames": 0,
       "byte_exact_roundtrip": true,
+      "streaming_file_roundtrip": true,
+      "bytes_api_python_peak_bytes": 853181,
+      "streaming_restore_python_peak_bytes": 289543,
       "monotonic_frames_checked": 268
     },
     {
@@ -64,6 +79,9 @@
       "epochs": 1,
       "quarantined_frames": 0,
       "byte_exact_roundtrip": true,
+      "streaming_file_roundtrip": true,
+      "bytes_api_python_peak_bytes": 903721,
+      "streaming_restore_python_peak_bytes": 287532,
       "monotonic_frames_checked": 266
     },
     {
@@ -75,10 +93,14 @@
       "epochs": 1,
       "quarantined_frames": 0,
       "byte_exact_roundtrip": true,
+      "streaming_file_roundtrip": true,
+      "bytes_api_python_peak_bytes": 813997,
+      "streaming_restore_python_peak_bytes": 259400,
       "monotonic_frames_checked": 238
     }
   ],
   "total_frames": 3320,
   "total_bytes": 10571898,
+  "memory_method": "tracemalloc peak Python allocations during reconstruction or file restore, after export. Includes parsed JSON frame index; excludes previously allocated source bytes and most native memory. Single run, not process RSS. Streaming copy buffer is 65536 bytes.",
   "caveat": "Original wall-clock timestamps and bytes are preserved, not repaired or synchronized. Device FrameNb is not an epoch boundary. Missing/bad/multiple timestamps and incomplete frames are quarantined; no interpolation."
 }

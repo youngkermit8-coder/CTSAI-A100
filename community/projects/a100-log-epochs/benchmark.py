@@ -5,9 +5,10 @@ import hashlib
 import itertools
 import json
 import tempfile
+import tracemalloc
 from pathlib import Path
 
-from epochs import export, index_frames, reconstruct
+from epochs import export, index_frames, reconstruct, restore
 
 ROOT = Path(__file__).resolve().parent
 
@@ -25,7 +26,20 @@ def main():
             assert hashlib.sha256(original).hexdigest() == row["sha256"]
             dest = Path(tmp) / row["scenario"]
             m = export(path, dest)
-            assert reconstruct(dest) == original
+            tracemalloc.start()
+            restored_bytes = reconstruct(dest)
+            _, bytes_peak = tracemalloc.get_traced_memory()
+            tracemalloc.stop()
+            assert restored_bytes == original
+            del restored_bytes
+            restored_path = Path(tmp) / (row["scenario"] + "-restored.csv")
+            tracemalloc.start()
+            restore_report = restore(dest, restored_path)
+            _, stream_peak = tracemalloc.get_traced_memory()
+            tracemalloc.stop()
+            with restored_path.open("rb") as stream:
+                assert hashlib.file_digest(stream, "sha256").hexdigest() == row["sha256"]
+            assert restore_report["source_bytes"] == len(original)
             checked = 0
             for epoch in sorted(dest.glob("epoch_*.csv")):
                 _, frames = index_frames(epoch.read_bytes())
@@ -50,6 +64,9 @@ def main():
                     "epochs": m["epochs"],
                     "quarantined_frames": quarantine,
                     "byte_exact_roundtrip": True,
+                    "streaming_file_roundtrip": True,
+                    "bytes_api_python_peak_bytes": bytes_peak,
+                    "streaming_restore_python_peak_bytes": stream_peak,
                     "monotonic_frames_checked": checked,
                 }
             )
@@ -59,6 +76,7 @@ def main():
         "sessions": reports,
         "total_frames": sum(r["frames"] for r in reports),
         "total_bytes": sum(r["source_bytes"] for r in reports),
+        "memory_method": "tracemalloc peak Python allocations during reconstruction or file restore, after export. Includes parsed JSON frame index; excludes previously allocated source bytes and most native memory. Single run, not process RSS. Streaming copy buffer is 65536 bytes.",
         "caveat": "Original wall-clock timestamps and bytes are preserved, not repaired or synchronized. Device FrameNb is not an epoch boundary. Missing/bad/multiple timestamps and incomplete frames are quarantined; no interpolation.",
     }
     (out / "summary.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
