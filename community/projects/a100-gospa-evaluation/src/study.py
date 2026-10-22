@@ -1,8 +1,9 @@
 """GOSPA p=2, alpha=2 point-set evaluation with explicit error decomposition."""
 
 import numpy as np
-from logio import xy
 from scipy.optimize import linear_sum_assignment
+
+from logio import xy
 
 
 def points(value):

@@ -22,6 +22,7 @@
 python -m pip install -r community/projects/a100-gospa-evaluation/requirements.txt
 python -m unittest discover -s community/projects/a100-gospa-evaluation/tests -v
 python community/projects/a100-gospa-evaluation/src/study.py
+python community/projects/a100-gospa-evaluation/src/cutoff_stress.py
 ```
 
 入口支持`--input`和`--output`。默认输入相对脚本定位，与工作目录无关。固定实验种子为20261022；默认输出为本项目results目录，会覆盖同名实验产物。算法参数暴露在src/study.py函数接口中；CLI仅选择数据与输出目录，实验默认参数在结果JSON中列出。
@@ -53,6 +54,10 @@ python community/projects/a100-gospa-evaluation/src/study.py
 
 ## 验证和限制
 
-6项测试覆盖空集、单点漏检、截断边界、对称性、顺序不变性及无效输入。小规模随机点集使用穷举全部分配作为独立oracle，与SciPy优化结果比较。
+9项测试覆盖空集、单点漏检、截断边界、对称性、顺序不变性及无效输入。小规模随机点集使用穷举全部分配及全部部分匹配作为独立oracle，与SciPy优化结果比较；新增不依赖分配算法的解析排名反转对照。
 
 记录点不等于物理目标真值，本实验评估注入的点集损坏，不代表真实检测准确率；没有目标ID切换或时间连续性评分。不同cutoff会改变位置与数量误差的权衡。算法构造完整代价矩阵，内存复杂度O(NM)，用于离线小规模点集，不用于无界点云流。
+
+## cutoff 敏感性
+
+固定同一批 207 帧参考点与两组扰动，扫描 0.1–4 m 的六个 cutoff。当 c=0.5 m 时，漏掉约三分之一点的平均分 0.86053 低于全部点偏移 0.3 m 的 1.22544；c=1 m 时前者变为 1.72106，排名反转。不能看过结果后挑选对某方案有利的 cutoff。解析对照、完整分解及 2,484 条逐帧评分见 [评估偏好与阈值报告](docs/cutoff-stress.md)。
