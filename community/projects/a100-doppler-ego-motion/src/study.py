@@ -33,8 +33,17 @@ def fit_velocity(angles, doppler, threshold=0.15, robust=True, seed=0):
                 best, inliers = score, mask
         if inliers.sum() < 3 or np.linalg.cond(a[inliers]) > 100:
             raise ValueError("No observable static-scatterer consensus")
-    velocity = np.linalg.lstsq(a[inliers], doppler[inliers], rcond=None)[0]
-    return velocity, inliers, float(np.linalg.cond(a[inliers]))
+    # A least-squares refit can move points across the original RANSAC cutoff.
+    # Return a fixed point of refitting and classification, or fail explicitly.
+    for _ in range(50):
+        if inliers.sum() < 3 or np.linalg.cond(a[inliers]) > 100:
+            raise ValueError("No observable consensus after refinement")
+        velocity = np.linalg.lstsq(a[inliers], doppler[inliers], rcond=None)[0]
+        selected = np.abs(a @ velocity - doppler) <= threshold
+        if not robust or np.array_equal(selected, inliers):
+            return velocity, inliers, float(np.linalg.cond(a[inliers]))
+        inliers = selected
+    raise ValueError("Consensus refinement did not converge")
 
 
 def experiment(frames, out):
