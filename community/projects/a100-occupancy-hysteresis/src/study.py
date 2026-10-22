@@ -3,6 +3,7 @@
 from itertools import pairwise
 
 import numpy as np
+
 from logio import xy
 
 
@@ -38,6 +39,19 @@ class Occupancy:
         self.last = None
         self.pending = None
         self.since = None
+
+    def value_at(self, time):
+        """Poll freshness even when no new measurement arrives.
+
+        Use the same monotonic time basis as update; polling does not renew
+        the last measurement time or advance occupancy confirmation timers.
+        """
+        if not np.isfinite(time):
+            self.reset()
+            raise ValueError("Finite polling time required")
+        if self.last is not None and (time < self.last or time - self.last > self.gap):
+            self.reset()
+        return self.state
 
     def update(self, time, count):
         if time is None or count is None:
@@ -173,6 +187,15 @@ def experiment(frames, out):
         },
         "synthetic": {
             "observations": len(times),
+            "common_known_available_samples": int(np.sum(known & valid)),
+            "debounced_wrong_common_samples": int(
+                np.sum(predictions[known & valid] != truth[known & valid])
+            ),
+            "instant_wrong_common_samples": int(
+                np.sum(baseline[known & valid] != truth[known & valid])
+            ),
+            "debounced_unknown_samples": int(np.sum(~known)),
+            "instant_unavailable_samples": int(np.sum(~valid)),
             "known_fraction": float(known.mean()),
             "debounced_wrong_known_samples": int(
                 np.sum(predictions[known] != truth[known])

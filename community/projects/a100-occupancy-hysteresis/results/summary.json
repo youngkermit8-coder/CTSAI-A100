@@ -8,6 +8,11 @@
   },
   "synthetic": {
     "observations": 200,
+    "common_known_available_samples": 185,
+    "debounced_wrong_common_samples": 10,
+    "instant_wrong_common_samples": 6,
+    "debounced_unknown_samples": 15,
+    "instant_unavailable_samples": 5,
     "known_fraction": 0.925,
     "debounced_wrong_known_samples": 10,
     "instant_wrong_available_samples": 6,

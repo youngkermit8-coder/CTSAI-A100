@@ -32,6 +32,42 @@ class LogTests(unittest.TestCase):
 
 
 class AlgorithmTests(unittest.TestCase):
+    def test_published_roi_boundaries(self):
+        from validate_presence import narrow_count
+
+        points = np.array(
+            [
+                [2.5, np.deg2rad(-20), 0],
+                [3.1, np.deg2rad(5), 0],
+                [3.1001, 0, 0],
+                [2.8, np.deg2rad(5.01), 0],
+            ]
+        )
+        self.assertEqual(narrow_count(points), 2)
+
+    def test_watchdog_without_new_measurements(self):
+        o = study.Occupancy(enter_seconds=0)
+        self.assertIs(o.update(0, 2), True)
+        self.assertIs(o.value_at(0.2), True)
+        self.assertIsNone(o.value_at(0.251))
+        self.assertIsNone(o.value_at(0.4))
+
+    def test_poll_does_not_confirm_or_extend_measurement(self):
+        o = study.Occupancy(max_gap=0.5)
+        o.update(0, 2)
+        self.assertIsNone(o.value_at(0.4))
+        self.assertEqual(o.last, 0)
+        self.assertIs(o.update(0.4, 2), True)
+        self.assertIs(o.value_at(0.8), True)
+        self.assertIsNone(o.value_at(0.901))
+
+    def test_watchdog_clock_reversal_and_invalid(self):
+        o = study.Occupancy(enter_seconds=0)
+        o.update(1, 2)
+        self.assertIsNone(o.value_at(0.9))
+        with self.assertRaises(ValueError):
+            o.value_at(float("nan"))
+
     def test_irregular_time_not_frame_count(self):
         o = study.Occupancy(max_gap=0.5)
         self.assertIsNone(o.update(0, 2))
