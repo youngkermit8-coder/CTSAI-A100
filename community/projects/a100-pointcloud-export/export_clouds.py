@@ -43,6 +43,8 @@ def read_frames(path):
                 frames.append(current)
                 current = None
             elif current is not None and "---->" in row[0]:
+                if current["stamp"] is not None:
+                    raise ValueError("Multiple capture timestamps in one frame")
                 current["stamp"] = datetime.strptime(
                     row[0].replace("---->", "").strip(), "%Y/%m/%d %H:%M:%S:%f"
                 )

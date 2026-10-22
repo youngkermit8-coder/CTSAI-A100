@@ -21,7 +21,7 @@ python export_clouds.py ../a100-indoor-cart-mti/data/targets/2026_08_02_16_19_35
 
 复用 [a100-indoor-cart-mti](../a100-indoor-cart-mti/README.md) 的全部 7 份 RawTarget，原采集及场景说明归 yyqdbngt。基线提交 `9a41e22b22b981d1500e4a28e056407baeb1027f`，每份输入与原 manifest 的 SHA-256 核验。未复制大文件、未新增硬件采集。
 
-6 项单元测试通过：坐标轴、空帧、重复设备帧号、跨午夜时间、uint32 最大 ID、非法记录/未闭合帧、时间缺失/倒退、float32 溢出和不覆盖已有目录。全部 **3320 帧、49524 个点**完成 PCD 与 bag payload 的逐字段一致性校验，同时检查 header 时间、PointField 类型/偏移、步长及上下文消息。
+7 项单元测试通过：坐标轴、空帧、重复设备帧号、跨午夜时间、uint32 最大 ID、非法记录/未闭合帧、时间缺失/倒退、float32 溢出和不覆盖已有目录。全部 **3320 帧、49524 个点**完成 PCD 与 bag payload 的逐字段一致性校验，同时检查 header 时间、PointField 类型/偏移、步长及上下文消息。
 
 验证记录见 [summary.json](results/summary.json)。80 帧靠近小推车片段从 bag 读回后生成下图；GIF 固定 10 fps 展示，不声称还原硬件帧率。这里没有运行 `ros2 bag play`、RViz 或实机订阅器，不能据此声称所有 ROS 发行版兼容。
 
@@ -42,3 +42,9 @@ python export_clouds.py ../a100-indoor-cart-mti/data/targets/2026_08_02_16_19_35
 `/a100/points` 使用 `sensor_msgs/msg/PointCloud2`，Humble 类型定义，rosbags writer 的 bag metadata version 9。`/a100/frame_context` 使用 `std_msgs/msg/String` JSON，包含文件顺序、设备帧号、完整标志、拒绝数字行数和源墙钟时间。下游若要求完整帧，必须读取该上下文并过滤，不能只看点云。
 
 bag 时间与 header 时间都为“记录墙钟相对首帧的差值 + 1 秒”，保持日志间隔并避开零时间；没有时区、UTC 或硬件时钟保证。缺失、相等或倒退的时间直接拒绝，应由调用者明确拆分为单调会话，不用猜测间隔修补。无 TF、传感器外参或强度标定；导出文件主要用于离线算法交换和回放验证。
+
+## 应用边界补充验证
+
+同一帧含多个采集时间戳时直接拒绝，避免后一个时间静默覆盖前一个并生成看似有效的 bag 时间。回归验证错误发生在创建任何输出目录之前。全部 7 组公开日志、3320 帧、49,524 点重新通过独立 PCD 和 bag 读回；合法单时间戳数据不变。
+
+当前共 7 项测试通过；针对本项的独立回归见 `tests/test_followup.py`。
