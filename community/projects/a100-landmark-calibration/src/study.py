@@ -1,6 +1,7 @@
 """Robust planar rigid alignment of paired landmarks; synthetic calibration study."""
 
 import numpy as np
+
 from logio import xy
 
 
@@ -48,8 +49,16 @@ def calibrate(source, target, threshold=0.12, seed=0):
             best, mask = score, selected
     if mask is None or mask.sum() < 3:
         raise ValueError("No consensus")
-    r, t = rigid(source[mask], target[mask])
-    return r, t, mask
+    # The returned mask must describe the returned transform, not its seed.
+    for _ in range(50):
+        if mask.sum() < 3:
+            raise ValueError("Consensus collapsed during refinement")
+        r, t = rigid(source[mask], target[mask])
+        selected = np.linalg.norm(source @ r.T + t - target, axis=1) <= threshold
+        if np.array_equal(selected, mask):
+            return r, t, mask
+        mask = selected
+    raise ValueError("Consensus refinement did not converge")
 
 
 def experiment(frames, out):
